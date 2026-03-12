@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Compliance Portal - ISO-9001-QMS-A04</title>
+    <style>
+        /* 基础样式：极致的枯燥感 */
+        :root {
+            --bg-gray: #f8f9fa;
+            --sidebar-gray: #ececec;
+            --border-color: #d1d1d1;
+            --text-main: #2c2c2c;
+            --text-muted: #6c757d;
+        }
+
+        body {
+            font-family: "Times New Roman", Times, serif; /* 经典的严肃字体 */
+            margin: 0;
+            display: flex;
+            background-color: var(--bg-gray);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 侧边栏：伪装成企业 Wiki */
+        nav {
+            width: 280px;
+            background-color: var(--sidebar-gray);
+            border-right: 1px solid var(--border-color);
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .nav-item {
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .nav-item:hover { background-color: #ddd; }
+        .nav-item.active { background-color: #fff; font-weight: bold; border-left: 3px solid #333; }
+
+        /* 主体内容：Word 页面感 */
+        main {
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .document-page {
+            background: white;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 60px 80px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+            min-height: 1100px;
+        }
+
+        /* 水印效果 */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 55%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100px;
+            color: rgba(0,0,0,0.03);
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+            z-index: 100;
+        }
+
+        /* 文档头部元数据 */
+        .header-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        h1 { font-size: 26px; margin-bottom: 10px; }
+        h2 { font-size: 18px; margin-top: 30px; border-bottom: 1px solid #eee; }
+        
+        /* 内容列表 */
+        .content-list { list-style: none; padding-left: 0; }
+        .content-list li { margin-bottom: 12px; line-height: 1.6; }
+        .content-list li::before { content: "• "; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div style="font-weight: bold; font-size: 16px; margin-bottom: 10px; border-bottom: 2px solid #333;">Audit Directories</div>
+        <a href="#" class="nav-item active">Global Audit Trails</a>
+        <a href="#" class="nav-item">Risk Mitigation SOPs</a>
+        <a href="#" class="nav-item">Regulatory Updates (ISO)</a>
+        <a href="#" class="nav-item">Legacy System Inventory</a>
+        <a href="#" class="nav-item">Archived Compliance Logs</a>
+    </nav>
+
+    <main>
+        <div class="watermark">CONFIDENTIAL</div>
+        
+        <div class="document-page">
+            <div class="header-meta">
+                <span>DOC ID: ISO-9001-QMS-A04</span>
+                <span>STATUS: DRAFT | VERSION: 2.1.4</span>
+                <span>CREATED: 2026-03-12</span>
+            </div>
+
+            <h1>Q1 Operational Compliance and Risk Assessment (Annex B)</h1>
+            <p style="font-style: italic; color: #666;">Optimizing professional workflow through data-driven analysis and stress-test micro-modules.</p>
+
+            <h2>1.0 Introduction to Compliance Controls</h2>
+            <p>This document details the non-standard data entries identified during the Q1 audit cycle. All personnel must review these entries to ensure organizational alignment.</p>
+
+            <h2>1.1 System Access and Logic Patterns</h2>
+            <ul class="content-list">
+                <li><strong>1.1.1 Biological Efficiency Data:</strong> 
+                    Current data suggests that <em>Bradypus variegatus</em> (three-toed sloths) maintain a metabolic homeostasis that allows them to suppress respiratory activity for up to 40 minutes under liquid immersion. This exceeds the 20-minute threshold of typical <em>Delphinidae</em> units.
+                </li>
+                <li><strong>1.1.2 Linguistic Anomalies:</strong> 
+                    Observation #402 indicates that a collective unit of <em>Phoenicopterus</em> is technically designated as a <strong>"Flamboyance"</strong>. System operators should take note of this during taxonomic classification.
+                </li>
+                <li><strong>1.1.3 Hardware Fatigue Simulation:</strong>
+                    [Click to expand log files] ... (这里可以放置你的小游戏入口)
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        /* 核心“老板键”功能 */
+        document.addEventListener('keydown', function(event) {
+            // 当按下 Esc 键时，瞬间跳转到 Google 搜索页面
+            if (event.key === "Escape") {
+                window.location.href = "https://www.google.com/search?q=quarterly+economic+report";
+            }
+        });
+
+        // 也可以增加一个虚假的保存逻辑，每分钟显示“Synced”
+        setInterval(() => {
+            console.log("Document synced to remote server at: " + new Date().toLocaleTimeString());
+        }, 60000);
+    </script>
+</body>
+</html>
