@@ -204,8 +204,8 @@
         async function fetchAuditData() {
             console.log("准备调用...");
 
-            // 2. 这里使用 'client' 而不是 'supabase'
-            const { data, error } = await supabase.functions.invoke('get-audit-log');
+            // 2. 这里使用 'client'
+            const { data, error } = await client.functions.invoke('get-audit-log');
 
             console.log("请求已发出，结果：", { data, error });
 
