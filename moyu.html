@@ -201,7 +201,28 @@
         // 这一步创建了名为 'client' 的实例，它才是真正拥有 .functions 的对象
         const client = supabase.createClient(supabaseUrl, supabaseKey);
 
-        
+        async function fetchAuditData() {
+            console.log("准备调用...");
+
+            // 2. 这里使用 'client'
+            const { data, error } = await client.functions.invoke('get-audit-log');
+
+            console.log("请求已发出，结果：", { data, error });
+
+            if (error) {
+                console.error("调用出错:", error);
+                return;
+            }
+            console.log("返回数据:", data);
+
+            
+            if (data) {
+                document.getElementById('article-title').innerText = data.title;
+                document.getElementById('article-body').innerText = data.content;
+            }
+        }
+
+        fetchAuditData();
         
 
        
