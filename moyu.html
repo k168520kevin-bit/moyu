@@ -166,9 +166,40 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script>
-       
+       /* 核心“老板键”功能 */
+        document.addEventListener('keydown', function(event) {
+            // 当按下 Esc 键时，瞬间跳转到 Google 搜索页面
+            if (event.key === "Escape") {
+                window.location.href = "https://www.google.com/search?q=quarterly+economic+report";
+            }
+        });
+
+        //分页
+        function showPage(pageNum) {
+            // 1. 隐藏所有内容部分 (假设你的内容都放在 class="annex-section" 的 div 里)
+            document.querySelectorAll('.annex-section').forEach(el => el.style.display = 'none');
+            
+            // 2. 显示目标页
+            document.getElementById('page-' + pageNum).style.display = 'block';
+
+            // 3. 更新按钮高亮 (简单实现)
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.style.background = 'white';
+                btn.style.color = 'black';
+            });
+            event.target.style.background = '#333';
+            event.target.style.color = 'white';
+        }
 
         console.log("准备发起 Edge Function 请求..."); // 第一步：确认函数被触发
+
+        // 1. 初始化客户端 (这一步必须在调用 invoke 之前完成)
+        // 请填入你的真实 URL 和 ANON_KEY
+        const supabaseUrl = 'https://ymjhrcyyizbjrqmqveie.supabase.co';
+        const supabaseKey = 'sb_publishable_e_-rzt-UNeVLBe2pJ7zS6w_dHWo02yZ';
+
+        // 这一步创建了名为 'client' 的实例，它才是真正拥有 .functions 的对象
+        const client = supabase.createClient(supabaseUrl, supabaseKey);
 
         
         
