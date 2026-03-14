@@ -101,23 +101,23 @@
         .content-list li { margin-bottom: 12px; line-height: 1.6; }
         .content-list li::before { content: "• "; font-weight: bold; }
 
-        /* 容器基础样式 */
-        #articles-container {
-            transition: opacity 0.4s ease-in-out;
-            min-height: 300px; /* 预留高度防止页面突然“跳动” */
+        /* 骨架屏动画 */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+            margin-bottom: 15px;
         }
 
-        /* 简单的旋转动画（可选） */
-        .spinner {
-            display: inline-block;
-            animation: rotate 2s linear infinite;
-            font-size: 24px;
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        .skeleton-title { width: 40%; height: 24px; }
+        .skeleton-text { width: 100%; height: 16px; }
+        .skeleton-text-short { width: 80%; height: 16px; }
 
     </style>
 </head>
@@ -205,10 +205,17 @@
 
             // --- 第一步：显示 Loading 状态 ---
             // 这里我们可以加入一个简单的 CSS 动画类名，或者一段文字
+            // 在 fetchAuditData 函数中替换原来的 Loading HTML
             container.innerHTML = `
-                <div id="audit-loading" style="text-align: center; padding: 40px; color: #999;">
-                    <div class="spinner" style="margin-bottom: 10px;">⌛</div>
-                    <p>正在调取实时合规数据，请稍候...</p>
+                <div style="padding: 20px;">
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text-short"></div>
+                    <br>
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text-short"></div>
                 </div>
             `;
 
