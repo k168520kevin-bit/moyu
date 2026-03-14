@@ -127,11 +127,8 @@
             <h1>Q1 Operational Compliance and Risk Assessment (Annex B)</h1>
             <p style="font-style: italic; color: #666;">Optimizing professional workflow through data-driven analysis and stress-test micro-modules.</p>
 
-            <h2>1.0 Introduction to Compliance Controls</h2>
-            <p>This document details the non-standard data entries identified during the Q1 audit cycle.</p>
-
             
-
+            <div id="articles-container"></div>
         
 
             <div class="pagination-bar" style="margin-top: 60px; padding: 20px; border-top: 1px solid #ddd; display: flex; justify-content: center; gap: 10px; align-items: center; font-size: 13px;">
@@ -199,9 +196,18 @@
             console.log("返回数据:", data);
 
             
-            if (data) {
-                document.getElementById('article-title').innerText = data.id;
-                document.getElementById('article-body').innerText = data.username;
+            if (data && Array.isArray(data) && data.length > 0) {
+                const container = document.getElementById('articles-container');
+                // 3. 使用 map 循环生成更严谨的 HTML 结构
+                container.innerHTML = data.map((item, index) => `
+                    <section class="audit-section" style="margin-bottom: 40px; border-bottom: 1px solid #d1d1d1; padding-bottom: 20px;">
+                        <h2 style="font-size: 18px; margin-bottom: 10px;">
+                            ${index + 1}.0 ${item.title || "未命名审计条目"}
+                        </h2>
+                        <p style="color: #2c2c2c; line-height: 1.6;">${item.content || "无详细记录内容。"}</p>
+                        <small style="color: #6c757d; font-family: monospace;">DOC REF: ${item.id || 'N/A'} | DATE: ${item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</small>
+                    </section>
+                `).join('');
             }
         }
 
