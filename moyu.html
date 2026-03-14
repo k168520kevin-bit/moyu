@@ -220,7 +220,9 @@
             `;
 
             try {
-                const { data, error } = await client.functions.invoke('get-audit-log');
+                const { data, error } = await client.functions.invoke('get-audit-log', {
+                  body: { page: 1, pageSize: 2 } // 这里的 key 要和后端解构的变量名一致
+                });
 
                 if (error) {
                     console.error("调用出错:", error);
