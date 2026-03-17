@@ -149,7 +149,7 @@
             <div id="articles-container"></div>
         
 
-            <div class="pagination-bar" style="margin-top: 60px; padding: 20px; border-top: 1px solid #ddd; display: flex; justify-content: center; gap: 10px; align-items: center; font-size: 13px;">
+            <div class="pagination-bar" id="pagination-wrapper" style="margin-top: 60px; padding: 20px; border-top: 1px solid #ddd; display: flex; justify-content: center; gap: 10px; align-items: center; font-size: 13px;">
                 <span style="color: #999;">Records:</span>
                 <button class="page-btn active" onclick="showPage(1)" style="padding: 4px 10px; cursor: pointer; border: 1px solid #333; background: #333; color: white;">1</button>
                 <button class="page-btn" onclick="showPage(2)" style="padding: 4px 10px; cursor: pointer; border: 1px solid #ccc; background: white;">2</button>
@@ -164,6 +164,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script>
+
+        // 1. 初始化客户端 (这一步必须在调用 invoke 之前完成)
+        // 请填入你的真实 URL 和 ANON_KEY
+        const supabaseUrl = 'https://ymjhrcyyizbjrqmqveie.supabase.co';
+        const supabaseKey = 'sb_publishable_e_-rzt-UNeVLBe2pJ7zS6w_dHWo02yZ';
+
+        // 这一步创建了名为 'client' 的实例，它才是真正拥有 .functions 的对象
+        const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // 记得在 fetchAuditData 外面定义好这些全局变量，方便切换页码
+        let currentPage = 1;
+        const pageSize = 2; // 按照你设置的每页显示 2 条
+
        /* 核心“老板键”功能 */
         document.addEventListener('keydown', function(event) {
             // 当按下 Esc 键时，瞬间跳转到 Google 搜索页面
@@ -173,7 +186,11 @@
         });
 
         //分页
-        function showPage(pageNum) {
+        async function showPage(pageNum) {
+            currentPage = pageNum;
+            await fetchAuditData(); // 重新拉取数据
+
+            /*
             // 1. 隐藏所有内容部分 (假设你的内容都放在 class="annex-section" 的 div 里)
             document.querySelectorAll('.annex-section').forEach(el => el.style.display = 'none');
             
@@ -187,25 +204,35 @@
             });
             event.target.style.background = '#333';
             event.target.style.color = 'white';
+            */
         }
 
-        console.log("准备发起 Edge Function 请求..."); // 第一步：确认函数被触发
-
-        // 1. 初始化客户端 (这一步必须在调用 invoke 之前完成)
-        // 请填入你的真实 URL 和 ANON_KEY
-        const supabaseUrl = 'https://ymjhrcyyizbjrqmqveie.supabase.co';
-        const supabaseKey = 'sb_publishable_e_-rzt-UNeVLBe2pJ7zS6w_dHWo02yZ';
-
-        // 这一步创建了名为 'client' 的实例，它才是真正拥有 .functions 的对象
-        const client = supabase.createClient(supabaseUrl, supabaseKey);
+        // 2. 动态生成分页按钮的逻辑
+        function renderPagination(totalCount) {
+            const wrapper = document.getElementById('pagination-wrapper');
+            // 计算总页数：向上取整 (总条数 / 每页条数)
+            const totalPages = Math.ceil(totalCount / pageSize);
+            
+            let html = `<span style="color: #999;">Records:</span>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const isActive = i === currentPage;
+                const style = isActive 
+                    ? "padding: 4px 10px; cursor: pointer; border: 1px solid #333; background: #333; color: white;" 
+                    : "padding: 4px 10px; cursor: pointer; border: 1px solid #ccc; background: white; color: black;";
+                    
+                html += `<button class="page-btn" onclick="showPage(${i})" style="${style}">${i}</button>`;
+            }
+            
+            wrapper.innerHTML = html;
+        }
 
         async function fetchAuditData() {
             console.log("准备调用...");
+            console.log(`请求第 ${currentPage} 页...`);
             const container = document.getElementById('articles-container');
 
-            // --- 第一步：显示 Loading 状态 ---
-            // 这里我们可以加入一个简单的 CSS 动画类名，或者一段文字
-            // 在 fetchAuditData 函数中替换原来的 Loading HTML
+            // 1. 显示 Loading 骨架屏
             container.innerHTML = `
                 <div style="padding: 20px;">
                     <div class="skeleton skeleton-title"></div>
@@ -220,8 +247,9 @@
             `;
 
             try {
-                const { data, error } = await client.functions.invoke('get-audit-log', {
-                  body: { page: 1, pageSize: 2 } // 这里的 key 要和后端解构的变量名一致
+                // 2. 调用 Edge Function，传入当前页码和条数
+                const { data: response, error } = await client.functions.invoke('get-audit-log', {
+                  body: { page: currentPage, pageSize: pageSize } // 这里的 key 要和后端解构的变量名一致
                 });
 
                 if (error) {
@@ -230,31 +258,49 @@
                     return;
                 }
 
-                // --- 第二步：渲染真实数据 ---
-                if (data && Array.isArray(data) && data.length > 0) {
-                    // 使用 opacity 实现淡入效果
-                    container.style.opacity = "0"; 
-                    
-                    container.innerHTML = data.map((item, index) => `
-                        <section class="audit-section" style="margin-bottom: 40px; border-bottom: 1px solid #d1d1d1; padding-bottom: 20px;">
-                            <h2 style="font-size: 18px; margin-bottom: 10px;">
-                                ${index + 1}.0 ${item.title || "未命名审计条目"}
-                            </h2>
-                            <p style="color: #2c2c2c; line-height: 1.6;">${item.content || "无详细记录内容。"}</p>
-                            <small style="color: #6c757d; font-family: monospace;">DOC REF: ${item.id || 'N/A'} | DATE: ${item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</small>
-                        </section>
-                    `).join('');
+                /// 3. 解析新结构 { data: [], count: 0 }
+                const list = response.data; 
+                const total = response.count;
 
-                    // 触发渐显动画
-                    setTimeout(() => { container.style.opacity = "1"; }, 50);
-                } else {
-                    container.innerHTML = "<p>当前没有找到任何审计记录。</p>";
-                }
+                console.log("分页数据:", list, "总条数:", total);
+
+                // 1. 渲染列表
+                renderList(list);
+
+                // 2. 渲染分页按钮 (传入总条数)
+                renderPagination(total);
 
             } catch (err) {
                 console.error("系统异常:", err);
                 container.innerHTML = "<p>连接服务器超时，请检查网络。</p>";
             }
+        }
+
+        // 1. 渲染列表
+        function renderList(list) {
+            const container = document.getElementById('articles-container');
+            if (list && Array.isArray(list) && list.length > 0) {
+                    // 使用 opacity 实现淡入效果
+                    container.style.opacity = "0"; 
+                    
+                    container.innerHTML= list.map((item, index) => `
+                        <section class="audit-section" style="margin-bottom: 40px; border-bottom: 1px solid #d1d1d1; padding-bottom: 20px;">
+                            <h2 style="font-size: 18px; margin-bottom: 10px;">
+                                ${(currentPage - 1) * pageSize + index + 1}.0 ${item.title || "审计条目"}
+                            </h2>
+                            <p style="color: #2c2c2c; line-height: 1.6;">${item.content || "无内容。"}</p>
+                            <small style="color: #6c757d; font-family: monospace;">DOC REF: ${item.id || 'N/A'} | DATE: ${item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</small>
+                        </section>
+                    `).join('');
+
+                    // 触发渐显动画
+                    setTimeout(() => { 
+                        container.style.transition = "opacity 0.5s ease"; // 确保有过渡效果
+                        container.style.opacity = "1"; 
+                    }, 50);
+                } else {
+                    container.innerHTML = "<p>当前没有找到任何审计记录。</p>";
+                }
         }
 
         fetchAuditData();
