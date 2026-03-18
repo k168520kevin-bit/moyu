@@ -31,8 +31,13 @@ def scrape_specific_stories():
         # class 同时包含 story_tile 和 true_link 的 a 标签
         target_links = soup.select('div.story_tile_cluster a.story_tile.true_link')
         
-        results = []
         base_url = "https://www.libraryofshortstories.com"
+
+        # 1. 检查数据库中是否已存在该 URL
+        existing_data = supabase.table("articles") \
+            .select("from_url") \
+            .eq("from_url", full_url) \
+            .execute()
 
         for link in target_links:
             print(f"开始打印---------------")
@@ -46,6 +51,11 @@ def scrape_specific_stories():
 
             full_url = base_url + path
             print(f"\n📖 正在深入抓取: {full_url}")
+
+            # 2. 判断是否存在
+            if existing_data.data:
+                print(f"⏭️  跳过已存在审计项: {full_url}")
+                continue  # 存在就直接跳到下一个循环，不执行下面的 page.goto
 
             # 2. 访问详情页
             page.goto(full_url, wait_until="networkidle")
