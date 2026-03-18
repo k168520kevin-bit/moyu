@@ -63,7 +63,7 @@ def scrape_specific_stories():
                 story_text_div = reading_section.find('div', id='story_text')
                 if story_text_div:
                     # 提取所有 p 标签的文本，并用换行符连接
-                    paragraphs = [p.get_text(strip=True) for p in story_text_div.find_all('p')]
+                    paragraphs = [str(p) for p in story_text_div.find_all('p')]
                     full_text = "\n\n".join(paragraphs)
                     
                     print(f"✅ 成功抓取文章：[{title}]")
