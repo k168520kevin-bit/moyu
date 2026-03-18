@@ -1,0 +1,28 @@
+name: Manual Story Scraper
+
+on:
+  workflow_dispatch: # 这个配置会为你生成一个“手动运行”的按钮
+
+jobs:
+  run_script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖并初始化浏览器
+        run: |
+          pip install playwright beautifulsoup4 supabase
+          playwright install chromium
+
+      - name: 执行爬虫脚本
+        env:
+          # 确保你在 Settings -> Secrets 里配置了这两个变量
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python main.py
