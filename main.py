@@ -33,11 +33,8 @@ def scrape_specific_stories():
         
         base_url = "https://www.libraryofshortstories.com"
 
-        # 1. 检查数据库中是否已存在该 URL
-        existing_data = supabase.table("articles") \
-            .select("from_url") \
-            .eq("from_url", full_url) \
-            .execute()
+        # 在循环开始前，一次性获取所有已存在的 URL
+        existing_urls = {item['from_url'] for item in supabase.table("articles").select("from_url").execute().data}
 
         for link in target_links:
             print(f"开始打印---------------")
@@ -53,7 +50,7 @@ def scrape_specific_stories():
             print(f"\n📖 正在深入抓取: {full_url}")
 
             # 2. 判断是否存在
-            if existing_data.data:
+            if full_url in existing_urls:
                 print(f"⏭️  跳过已存在审计项: {full_url}")
                 continue  # 存在就直接跳到下一个循环，不执行下面的 page.goto
 
