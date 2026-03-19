@@ -110,6 +110,16 @@
             margin-bottom: 15px;
         }
 
+        .article-content-preview {
+            color: #2c2c2c;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3; /* 这里设置你想显示的行数，比如 3 行 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         @keyframes skeleton-loading {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
@@ -185,22 +195,6 @@
         async function showPage(pageNum) {
             currentPage = pageNum;
             await fetchAuditData(); // 重新拉取数据
-
-            /*
-            // 1. 隐藏所有内容部分 (假设你的内容都放在 class="annex-section" 的 div 里)
-            document.querySelectorAll('.annex-section').forEach(el => el.style.display = 'none');
-            
-            // 2. 显示目标页
-            document.getElementById('page-' + pageNum).style.display = 'block';
-
-            // 3. 更新按钮高亮 (简单实现)
-            document.querySelectorAll('.page-btn').forEach(btn => {
-                btn.style.background = 'white';
-                btn.style.color = 'black';
-            });
-            event.target.style.background = '#333';
-            event.target.style.color = 'white';
-            */
         }
 
         // 2. 动态生成分页按钮的逻辑
@@ -284,7 +278,7 @@
                             <h2 style="font-size: 18px; margin-bottom: 10px;">
                                 ${(currentPage - 1) * pageSize + index + 1}.0 ${item.title || "审计条目"}
                             </h2>
-                            <p style="color: #2c2c2c; line-height: 1.6;">${item.content || "无内容。"}</p>
+                            <p class="article-content-preview" style="color: #2c2c2c; line-height: 1.6;">${item.content || "无内容。"}</p>
                             <small style="color: #6c757d; font-family: monospace;">DOC REF: ${item.id || 'N/A'} | DATE: ${item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</small>
                         </section>
                     `).join('');
