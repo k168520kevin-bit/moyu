@@ -278,7 +278,7 @@
                             <h2 style="font-size: 18px; margin-bottom: 10px;">
                                 ${(currentPage - 1) * pageSize + index + 1}.0 ${item.title || "审计条目"}
                             </h2>
-                            <p class="article-content-preview" style="color: #2c2c2c; line-height: 1.6;">${item.content || "无内容。"}</p>
+                            <div class="color: #2c2c2c; line-height: 1.6; padding: 10px; background: #f9f9f9; border-radius: 4px;">${item.content || "无内容。"}</div>
                             <small style="color: #6c757d; font-family: monospace;">DOC REF: ${item.id || 'N/A'} | DATE: ${item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</small>
                         </section>
                     `).join('');
