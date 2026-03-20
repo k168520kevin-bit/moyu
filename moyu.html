@@ -20,6 +20,8 @@
             margin: 0;
             display: flex;
             background-color: #f4f4f4;
+            height: 100vh;
+            overflow: hidden;   /* 禁用 body 的全局滚动条 */
         }   
 
         /* 侧边栏：伪装成企业 Wiki */
@@ -32,6 +34,12 @@
             flex-direction: column;
             gap: 15px;
             font-size: 14px;
+
+            /* 核心修改：固定高度并禁止滚动 */
+            height: 100vh;      /* 高度占满整个屏幕 */
+            position: sticky;   /* 粘性定位 */
+            top: 0;             /* 顶部对齐 */
+            overflow-y: auto;   /* 如果侧边栏内容太多，允许它自己内部滚动 */
         }
 
         .nav-item {
@@ -50,8 +58,10 @@
         main {
             flex: 1;
             padding: 50px;
-            overflow-y: auto;
+            height: 100vh;      /* 高度也占满屏幕 */
+            overflow-y: scroll; /* 强制开启垂直滚动条 */
             position: relative;
+            background-color: #f4f4f4;
         }
 
         .document-page {
