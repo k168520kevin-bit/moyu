@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Audit Detail - Restricted Access</title>
+    <style>
+        /* 沿用首页的视觉规范 */
+        :root { --border-color: #d1d1d1; --text-main: #2c2c2c; }
+        body { font-family: Georgia, serif; background-color: #f4f4f4; margin: 0; padding: 50px; }
+        
+        .document-page {
+            background: white;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 80px 100px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            min-height: 1000px;
+            position: relative;
+        }
+
+        /* 顶部导航，伪装成行政系统 */
+        .back-nav {
+            max-width: 850px;
+            margin: 0 auto 20px;
+            font-size: 13px;
+        }
+        .back-nav a { color: #666; text-decoration: none; }
+        .back-nav a:hover { text-decoration: underline; }
+
+        h1 { font-size: 28px; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 30px; }
+        
+        /* 全文内容区域 */
+        #full-content { font-size: 16px; color: var(--text-main); line-height: 1.8; }
+        #full-content p { margin-bottom: 20px; } /* 确保段落间距 */
+
+        .loading { color: #999; text-align: center; margin-top: 100px; }
+        
+        .meta-footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="back-nav">
+        <a href="index.html">⬅ 返回审计目录 (Global Audit Trails)</a>
+    </div>
+
+    <main class="document-page">
+        <div id="loading-tip" class="loading">正在解密文档数据...</div>
+        
+        <div id="article-content" style="display: none;">
+            <div style="font-size: 11px; color: #999; margin-bottom: 20px;">
+                CLASSIFICATION: SECURE // DOCID: <span id="doc-id"></span>
+            </div>
+            
+            <h1 id="article-title">加载中...</h1>
+            
+            <div id="full-content"></div>
+
+            <div class="meta-footer">
+                <p>SOURCE URL: <span id="source-url"></span></p>
+                <p>SYSTEM TIMESTAMP: <span id="sys-time"></span></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script>
+        const supabaseUrl = 'https://ymjhrcyyizbjrqmqveie.supabase.co';
+        const supabaseKey = 'sb_publishable_e_-rzt-UNeVLBe2pJ7zS6w_dHWo02yZ';
+        const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // 1. 获取 URL 中的 id 参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id');
+
+        async function fetchArticleDetail() {
+            if (!articleId) {
+                document.getElementById('loading-tip').innerText = "无效的文档 ID。";
+                return;
+            }
+
+            try {
+                // 2. 从 Supabase 查询单条记录
+                const { data, error } = await client
+                    .from('articles')
+                    .select('*')
+                    .eq('id', articleId)
+                    .single(); // 只取一条
+
+                if (error || !data) throw error;
+
+                // 3. 填充数据
+                document.getElementById('article-title').innerText = data.title;
+                document.getElementById('full-content').innerHTML = data.content;
+                document.getElementById('doc-id').innerText = data.id;
+                document.getElementById('source-url').innerText = data.from_url;
+                document.getElementById('sys-time').innerText = new Date(data.created_at).toLocaleString();
+
+                // 4. 显示内容
+                document.getElementById('loading-tip').style.display = 'none';
+                document.getElementById('article-content').style.display = 'block';
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading-tip').innerText = "文档加载失败，权限不足或文件已归档。";
+            }
+        }
+
+        fetchArticleDetail();
+
+        // 依然保留 Esc 键老板键逻辑
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") window.location.href = "https://www.google.com";
+        });
+    </script>
+</body>
+</html>
