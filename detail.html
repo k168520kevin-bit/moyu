@@ -21,6 +21,8 @@
             display: flex; /* 保持 flex 布局以对齐侧边栏感 */
             background-color: #f4f4f4; /* 关键：外部背景色 */
             min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;   /* 禁用 body 的全局滚动条 */
         }
 
         /* 侧边栏保持一致（虽然详情页可能不需要跳转，但保留它能维持视觉统一） */
@@ -33,6 +35,12 @@
             flex-direction: column;
             gap: 15px;
             font-size: 14px;
+
+            /* 核心修改：固定高度并禁止滚动 */
+            height: 100vh;      /* 高度占满整个屏幕 */
+            position: sticky;   /* 粘性定位 */
+            top: 0;             /* 顶部对齐 */
+            overflow-y: auto;   /* 如果侧边栏内容太多，允许它自己内部滚动 */
         }
 
         main {
@@ -40,6 +48,9 @@
             padding: 50px;
             overflow-y: auto;
             position: relative;
+
+            height: 100vh;      /* 高度也占满屏幕 */
+            overflow-y: scroll; /* 强制开启垂直滚动条 */
         }
 
         /* 复用首页的白色纸张样式 */
