@@ -191,17 +191,17 @@
                 .single();
 
             if (data) {
-                document.getElementById('article-title').innerText = data.title;
-                document.getElementById('full-content').innerHTML = data.content;
-                document.getElementById('doc-id').innerText = data.id.substring(0, 13).toUpperCase();
-                document.getElementById('access-url').innerText = data.from_url;
-                document.getElementById('footprint').innerText = btoa(data.id).substring(0, 16);
-
                 // --- 核心修改：处理时间戳 ---
                 // 方案 A：直接截取字符串（最快，不受时区干扰）
                 console.log(data.created_at);
                 const formattedDate = data.created_at.split('T')[0];
                 document.getElementById('retrieved-date').innerText = formattedDate;
+                
+                document.getElementById('article-title').innerText = data.title;
+                document.getElementById('full-content').innerHTML = data.content;
+                document.getElementById('doc-id').innerText = data.id.substring(0, 13).toUpperCase();
+                document.getElementById('access-url').innerText = data.from_url;
+                document.getElementById('footprint').innerText = btoa(data.id).substring(0, 16);
             }
         }
 
