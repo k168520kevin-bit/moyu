@@ -1,0 +1,29 @@
+name: Standard Ebooks Scraper  # 这个名字会显示在 GitHub Actions 的左侧列表
+
+on:
+  workflow_dispatch:  # 允许手动点击按钮运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖
+        # 如果你的脚本不需要 playwright，可以删掉最后一行以加快运行速度
+        run: |
+          pip install requests beautifulsoup4 supabase playwright
+          playwright install --with-deps chromium
+
+      - name: 执行 Standard Ebooks 爬虫
+        env:
+          # 这两个变量必须在仓库的 Settings -> Secrets -> Actions 里配置
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python standardebooks.py
