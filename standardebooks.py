@@ -89,7 +89,7 @@ def get_all_book_paths(start_page, end_page):
 
 
 def save_chapter(chapter_node, book_title, part_name, index):
-    print(f"链接: {book_title}") s
+    print(f"链接: {book_title}")
 
 
 # --- 执行脚本 ---
