@@ -30,25 +30,57 @@ def get_all_book_paths(start_page, end_page):
             # 1. 先准备一个空列表，用来装抓到的路径
             page_paths = []
 
+            base_url = "https://standardebooks.org"
+
             # 2. 开始循环：遍历你在网页中找到的所有 <a> 标签 (links)
             for link in links:
-                
                 # 3. 尝试获取这个标签里的 'href' 属性（也就是 /ebooks/xxx 那个路径）
                 path = link.get('href')
                 print(f"链接: {path}")
+                book_url = base_url + path
+                response = requests.get(book_url)
+                soup = BeautifulSoup(response.text, 'html.parser')
                 
-                # 4. 判断一下：如果这个路径不是空的（即存在这个属性）
-                if path:
-                    
-                    # 5. 把这个干净的路径存进我们的列表里
-                    page_paths.append(path)
+
+                # 1. 获取书名（作为这一批章节的父级标识）
+                book_title = soup.find('h1').get_text(strip=True)
+                book_id = book_url.split('/')[-1] # 得到 'chance'
+
+                # 2. 核心：寻找所有的 <section> 标签
+                # Standard Ebooks 的章节通常在 <section> 内，且有 epub:type="chapter"
+                chapters = soup.find_all('section', attrs={"epub:type": "chapter"})
+                
+                # 如果没找到特定的 chapter 属性，就找普通的 section
+                if not chapters:
+                    chapters = soup.find_all('section')
+
+                print(f"检测到 {len(chapters)} 个章节，准备分段存入数据库...")
+                print(f"检测到 {chapters} 个...")
+
+                for index, chapter in enumerate(chapters, start=1):
+                    # 提取当前章节标题
+                    # 通常章节内第一个 h2 或 h3 是标题
+                    title_tag = chapter.find(['h2', 'h3', 'h4'])
+                    chapter_title = title_tag.get_text(strip=True) if title_tag else f"Chapter {index}"
+
+                    # 准备数据
+                    chapter_data = {
+                        "title": f"{book_title} - {chapter_title}", # 方便你在列表页搜索
+                        "content": str(chapter),                    # 只存这一章的 HTML
+                        "summary": chapter.get_text()[:150] + "...",
+                        "from_url": f"{book_url}#chapter-{index}",
+                        # 额外字段建议：
+                        # "book_group": book_id,
+                        # "order_index": index
+                    }
+                    print(f"检测到 {chapter_data} ...")
+                    time.sleep(2)
+                
 
             
             print(f"本页抓取到 {len(page_paths)} 本书")
             all_extracted_paths.extend(page_paths)
             
-            # 💡 关键：礼貌爬虫，每页爬完歇 1-2 秒，防止被封 IP
-            time.sleep(2)
             
         except Exception as e:
             print(f"抓取第 {page_num} 页时出错: {e}")
@@ -59,7 +91,7 @@ def get_all_book_paths(start_page, end_page):
 # --- 执行脚本 ---
 # 假设你想爬取前 5 页的内容
 start = 1
-end = 5 
+end = 1 
 final_paths = get_all_book_paths(start, end)
 
 print(f"\n任务完成！总共抓取到 {len(final_paths)} 条书籍路径。")
