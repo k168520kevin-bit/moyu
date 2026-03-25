@@ -71,6 +71,7 @@ def get_all_book_paths(start_page, end_page):
                     # 场景 B：书没有 Part，直接是章节
                     # 2. 核心：寻找所有的 <section> 标签
                     # Standard Ebooks 的章节通常在 <section> 内，且有 epub:type="chapter"
+                    print(f"检测到 没有part ...")
                     chapters = soup.find_all('section', attrs={"epub:type": "chapter"})
                     for chapter in chapters:
                         save_chapter(chapter, book_title, None, chapter_global_index)
@@ -85,7 +86,7 @@ def get_all_book_paths(start_page, end_page):
 
 
 def save_chapter(chapter_node, book_title, part_name, index):
-    print(f"链接: {book_title}")    
+    print(f"链接: {book_title}")s    
 
 
 # --- 执行脚本 ---
