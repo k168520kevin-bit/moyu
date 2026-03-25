@@ -48,7 +48,9 @@ def get_all_book_paths(start_page, end_page):
                 print(f"链接: {book_title}")
 
                 # 2. 寻找所有的 Part（部）
-                parts = soup.find_all('section', attrs={"epub:type": re.compile(r'part')})
+                # 注意：在 CSS 选择器中，属性名里的冒号 ":" 需要用反斜杠 "\" 转义
+                # [epub\:type*="part"] 意思是：寻找 epub:type 属性中包含 "part" 字样的标签
+                parts = soup.select('section[epub\:type*="part"]')
                 print(f"链接: {parts}")
 
                 chapter_global_index = 1 # 全局章节计数器，用于排序
@@ -65,7 +67,9 @@ def get_all_book_paths(start_page, end_page):
                         print(f"检测到 {part_name} ...")
                         
                         # 在这个 Part 内部寻找所有章节
-                        chapters = part.find_all('section', attrs={"epub:type": "chapter"})
+                        # 在这个 Part 内部寻找 Chapter
+                        # 同样使用包含匹配，因为 chapter 后面也跟着 bodymatter 等字样
+                        chapters = part.select('section[epub\:type*="chapter"]')
                         for chapter in chapters:
                             save_chapter(chapter, book_title, part_name, chapter_global_index)
                             chapter_global_index += 1
@@ -76,7 +80,7 @@ def get_all_book_paths(start_page, end_page):
                     # 2. 核心：寻找所有的 <section> 标签
                     # Standard Ebooks 的章节通常在 <section> 内，且有 epub:type="chapter"
                     print(f"检测到 没有part ...")
-                    chapters = soup.find_all('section', attrs={"epub:type": "chapter"})
+                    chapters = part.select('section[epub\:type*="chapter"]')
                     for chapter in chapters:
                         save_chapter(chapter, book_title, None, chapter_global_index)
                         chapter_global_index += 1
