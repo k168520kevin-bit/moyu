@@ -38,7 +38,7 @@ def get_all_book_paths(start_page, end_page):
                 # 3. 尝试获取这个标签里的 'href' 属性（也就是 /ebooks/xxx 那个路径）
                 path = link.get('href')
                 print(f"链接: {path}")
-                book_url = base_url + path
+                book_url = base_url + path + "/text/single-page"
                 print(f"链接: {book_url}")
                 response = requests.get(book_url)
                 soup = BeautifulSoup(response.text, 'html.parser')
