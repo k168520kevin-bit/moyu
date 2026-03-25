@@ -46,7 +46,7 @@ def get_all_book_paths(start_page, end_page):
                 book_title = soup.find('h1').get_text(strip=True)
 
                 # 2. 寻找所有的 Part（部）
-                parts = soup.find_all('section', attrs={"epub:type": "part"})
+                parts = soup.find_all('section', attrs={"epub:type": re.compile(r'part')})
 
                 chapter_global_index = 1 # 全局章节计数器，用于排序
 
@@ -87,7 +87,7 @@ def get_all_book_paths(start_page, end_page):
 
 
 def save_chapter(chapter_node, book_title, part_name, index):
-    print(f"链接: ") 
+    print(f"链接: {book_title}") 
 
 
 # --- 执行脚本 ---
