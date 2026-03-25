@@ -44,49 +44,49 @@ def get_all_book_paths(start_page, end_page):
 
                 # 1. 获取书名（作为这一批章节的父级标识）
                 book_title = soup.find('h1').get_text(strip=True)
-                book_id = book_url.split('/')[-1] # 得到 'chance'
 
-                # 2. 核心：寻找所有的 <section> 标签
-                # Standard Ebooks 的章节通常在 <section> 内，且有 epub:type="chapter"
-                chapters = soup.find_all('section', attrs={"epub:type": "chapter"})
-                
-                # 如果没找到特定的 chapter 属性，就找普通的 section
-                if not chapters:
-                    chapters = soup.find_all('section')
+                # 2. 寻找所有的 Part（部）
+                parts = soup.find_all('section', attrs={"epub:type": "part"})
 
-                print(f"检测到 {len(chapters)} 个章节，准备分段存入数据库...")
-                print(f"检测到 {chapters} 个...")
+                chapter_global_index = 1 # 全局章节计数器，用于排序
 
-                for index, chapter in enumerate(chapters, start=1):
-                    # 提取当前章节标题
-                    # 通常章节内第一个 h2 或 h3 是标题
-                    title_tag = chapter.find(['h2', 'h3', 'h4'])
-                    chapter_title = title_tag.get_text(strip=True) if title_tag else f"Chapter {index}"
+                if parts:
+                    # 场景 A：书有 Part 结构
+                    for p_idx, part in enumerate(parts, start=1):
+                        # 获取 Part 的标题（例如 "Part I"）
+                        part_title_tag = part.find(['h2', 'h3'])
+                        # 2. 核心：寻找所有的 <section> 标签
+                        # Standard Ebooks 的章节通常在 <section> 内，且有 epub:type="chapter"
+                        part_name = part_title_tag.get_text(strip=True) if part_title_tag else f"Part {p_idx}"
+                        print(f"检测到 {part_name} ...")
+                        
+                        # 在这个 Part 内部寻找所有章节
+                        chapters = part.find_all('section', attrs={"epub:type": "chapter"})
+                        for chapter in chapters:
+                            save_chapter(chapter, book_title, part_name, chapter_global_index)
+                            chapter_global_index += 1
 
-                    # 准备数据
-                    chapter_data = {
-                        "title": f"{book_title} - {chapter_title}", # 方便你在列表页搜索
-                        "content": str(chapter),                    # 只存这一章的 HTML
-                        "summary": chapter.get_text()[:150] + "...",
-                        "from_url": f"{book_url}#chapter-{index}",
-                        # 额外字段建议：
-                        # "book_group": book_id,
-                        # "order_index": index
-                    }
-                    print(f"检测到 {chapter_data} ...")
-                    time.sleep(2)
-                
-
-            
-            print(f"本页抓取到 {len(page_paths)} 本书")
-            all_extracted_paths.extend(page_paths)
-            
+                            time.sleep(2)
+                else:
+                    # 场景 B：书没有 Part，直接是章节
+                    # 2. 核心：寻找所有的 <section> 标签
+                    # Standard Ebooks 的章节通常在 <section> 内，且有 epub:type="chapter"
+                    chapters = soup.find_all('section', attrs={"epub:type": "chapter"})
+                    for chapter in chapters:
+                        save_chapter(chapter, book_title, None, chapter_global_index)
+                        chapter_global_index += 1
+                        time.sleep(2)           
             
         except Exception as e:
             print(f"抓取第 {page_num} 页时出错: {e}")
             break
 
     return all_extracted_paths
+
+
+def save_chapter(chapter_node, book_title, part_name, index):
+    print(f"链接: {book_title}")    
+
 
 # --- 执行脚本 ---
 # 假设你想爬取前 5 页的内容
