@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+import re
 
 def get_all_book_paths(start_page, end_page):
     base_url = "https://standardebooks.org/ebooks"
