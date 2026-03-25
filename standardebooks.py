@@ -51,7 +51,6 @@ def get_all_book_paths(start_page, end_page):
                 # 注意：在 CSS 选择器中，属性名里的冒号 ":" 需要用反斜杠 "\" 转义
                 # [epub\:type*="part"] 意思是：寻找 epub:type 属性中包含 "part" 字样的标签
                 parts = soup.select('section[epub\:type*="part"]')
-                print(f"链接: {parts}")
 
                 chapter_global_index = 1 # 全局章节计数器，用于排序
 
