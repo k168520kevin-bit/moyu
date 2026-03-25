@@ -53,6 +53,7 @@ def get_all_book_paths(start_page, end_page):
                 if parts:
                     # 场景 A：书有 Part 结构
                     for p_idx, part in enumerate(parts, start=1):
+                        print(f"检测到有part ...")
                         # 获取 Part 的标题（例如 "Part I"）
                         part_title_tag = part.find(['h2', 'h3'])
                         # 2. 核心：寻找所有的 <section> 标签
@@ -86,7 +87,7 @@ def get_all_book_paths(start_page, end_page):
 
 
 def save_chapter(chapter_node, book_title, part_name, index):
-    print(f"链接: {book_title}")s    
+    print(f"链接: ") 
 
 
 # --- 执行脚本 ---
