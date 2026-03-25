@@ -41,7 +41,7 @@ def get_all_book_paths(start_page, end_page):
                 book_url = base_url + path
                 response = requests.get(book_url)
                 soup = BeautifulSoup(response.text, 'html.parser')
-                
+                print(f"链接: {soup}")
 
                 # 1. 获取书名（作为这一批章节的父级标识）
                 book_title = soup.find('h1').get_text(strip=True)
