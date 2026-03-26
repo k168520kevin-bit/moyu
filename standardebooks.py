@@ -126,4 +126,4 @@ end = 1
 test_url = "https://standardebooks.org/ebooks/dorothy-l-sayers_robert-eustace/the-documents-in-the-case/text/single-page"
 final_paths = test(test_url)
 
-print(f"\n任务完成！总共抓取到 {len(final_paths)} 条书籍路径。")
+print(f"\n任务完成！")
