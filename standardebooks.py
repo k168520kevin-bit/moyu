@@ -94,7 +94,10 @@ def get_from_section():
     print(f"section-1 chapter-1的模式")
 
 def test(test_url):
-    response = requests.get(test_url, headers=headers, params=params)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+    }
+    response = requests.get(test_url, headers=headers)
     response.raise_for_status() # 检查请求是否成功
 
     soup = BeautifulSoup(response.text, 'html.parser')
